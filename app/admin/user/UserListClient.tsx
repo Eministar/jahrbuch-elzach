@@ -17,7 +17,7 @@ type UserRow = {
   has_voted: number;
 };
 
-export default function UserListClient({ users }: { users: UserRow[] }) {
+export default function UserListClient({ users, compact = false }: { users: UserRow[]; compact?: boolean }) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
@@ -26,7 +26,22 @@ export default function UserListClient({ users }: { users: UserRow[] }) {
         <div className="text-center py-12 text-[#b8aea5]">
           Keine Benutzer gefunden. Passe deine Filter an.
         </div>
+      ) : compact ? (
+        // Compact view for sidebar - just show usernames
+        users.map((u) => (
+          <div
+            key={u.id}
+            className="px-3 py-2 rounded-lg bg-[#2a2520]/60 hover:bg-[#38302b]/60 transition-colors"
+          >
+            <div className="flex items-center gap-2 text-sm">
+              <ProfileAvatar userId={u.id} username={u.username} size={20} />
+              <span className="text-[#f5f1ed] truncate flex-1">{u.username}</span>
+              <span className="text-xs text-[#b8aea5] shrink-0">#{u.id}</span>
+            </div>
+          </div>
+        ))
       ) : (
+        // Full view - show all users expanded by default
         users.map((u) => {
           const isExpanded = expandedId === u.id;
           return (

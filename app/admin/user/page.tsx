@@ -179,7 +179,7 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
                       <div className="mt-2 text-xs text-[#b8aea5]">Keine Nutzer</div>
                     ) : (
                       <div className="mt-2">
-                        <UserListClient users={g.items} />
+                        <UserListClient users={g.items} compact={true} />
                       </div>
                     )}
                   </details>
