@@ -37,31 +37,31 @@ export default function UserListClient({ users }: { users: UserRow[] }) {
               {/* Compact header - always visible */}
               <button
                 onClick={() => setExpandedId(isExpanded ? null : u.id)}
-                className="w-full px-4 py-3 flex items-center justify-between gap-4 text-left hover:bg-[#38302b]/30 transition-colors"
+                className="w-full px-3 py-3 flex items-center justify-between gap-2 text-left hover:bg-[#38302b]/30 transition-colors"
               >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
                   <ProfileAvatar userId={u.id} username={u.username} size={24} />
-                  <span className="font-semibold text-[#f5f1ed] truncate">{u.username}</span>
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#e89a7a]/10 text-[#e89a7a] border border-[#e89a7a]/20 text-xs font-medium shrink-0">
+                  <span className="font-semibold text-[#f5f1ed] truncate text-sm">{u.username}</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#e89a7a]/10 text-[#e89a7a] border border-[#e89a7a]/20 text-xs font-medium shrink-0">
                     {u.role}
                   </span>
                   {u.class && (
-                    <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full bg-[#8faf9d]/10 text-[#8faf9d] border border-[#8faf9d]/20 text-xs font-medium shrink-0">
+                    <span className="hidden lg:inline-flex items-center px-2 py-0.5 rounded-full bg-[#8faf9d]/10 text-[#8faf9d] border border-[#8faf9d]/20 text-xs font-medium shrink-0">
                       {u.class}
                     </span>
                   )}
                   <span
-                    className={`hidden md:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium shrink-0 ${
+                    className={`hidden xl:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${
                       u.has_voted
                         ? "bg-[#8faf9d]/10 text-[#8faf9d]"
                         : "bg-[#d97757]/10 text-[#d97757]"
                     }`}
                   >
-                    {u.has_voted ? "✓ Abgestimmt" : "○ Nicht abgestimmt"}
+                    {u.has_voted ? "✓" : "○"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs text-[#b8aea5]">ID: {u.id}</span>
+                  <span className="hidden sm:inline text-xs text-[#b8aea5]">#{u.id}</span>
                   {isExpanded ? (
                     <ChevronUp className="h-4 w-4 text-[#e89a7a]" />
                   ) : (
@@ -72,16 +72,16 @@ export default function UserListClient({ users }: { users: UserRow[] }) {
 
               {/* Expanded details */}
               {isExpanded && (
-                <div className="px-4 pb-4 space-y-4 border-t border-[#e89a7a]/10">
+                <div className="px-3 pb-4 space-y-4 border-t border-[#e89a7a]/10">
                   {/* Mobile: show class and vote status if hidden above */}
-                  <div className="sm:hidden flex flex-wrap gap-2 pt-3">
+                  <div className="lg:hidden flex flex-wrap gap-2 pt-3">
                     {u.class && (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#8faf9d]/10 text-[#8faf9d] border border-[#8faf9d]/20 text-xs font-medium">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#8faf9d]/10 text-[#8faf9d] border border-[#8faf9d]/20 text-xs font-medium">
                         {u.class}
                       </span>
                     )}
                     <span
-                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                         u.has_voted
                           ? "bg-[#8faf9d]/10 text-[#8faf9d]"
                           : "bg-[#d97757]/10 text-[#d97757]"
@@ -89,27 +89,30 @@ export default function UserListClient({ users }: { users: UserRow[] }) {
                     >
                       {u.has_voted ? "✓ Abgestimmt" : "○ Nicht abgestimmt"}
                     </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#b8aea5]/10 text-[#b8aea5] text-xs font-medium">
+                      ID: {u.id}
+                    </span>
                   </div>
 
                   {/* Role & Password */}
                   <div className="pt-3 space-y-3">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <form action={updateUserRoleAction} className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2">
+                      <form action={updateUserRoleAction} className="flex items-center gap-2 flex-1 min-w-[200px]">
                         <input type="hidden" name="id" value={u.id} />
-                        <select name="role" defaultValue={u.role} className="input-base text-sm">
+                        <select name="role" defaultValue={u.role} className="input-base text-sm flex-1">
                           <option value="user">user</option>
                           <option value="moderator">moderator</option>
                           <option value="admin">admin</option>
                         </select>
-                        <GlowButton variant="primary" className="px-3 py-2 text-sm">
+                        <GlowButton variant="primary" className="px-3 py-2 text-sm whitespace-nowrap">
                           Rolle ändern
                         </GlowButton>
                       </form>
-                      <form action={deleteUserAction}>
+                      <form action={deleteUserAction} className="flex-shrink-0">
                         <input type="hidden" name="id" value={u.id} />
                         <GlowButton
                           variant="secondary"
-                          className="px-3 py-2 text-sm"
+                          className="px-3 py-2 text-sm w-full sm:w-auto"
                           iconLeft={<Trash2 className="h-4 w-4" />}
                         >
                           Löschen
@@ -117,7 +120,7 @@ export default function UserListClient({ users }: { users: UserRow[] }) {
                       </form>
                     </div>
 
-                    <form action={updateUserPasswordAction} className="flex items-center gap-2">
+                    <form action={updateUserPasswordAction} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                       <input type="hidden" name="id" value={u.id} />
                       <input
                         name="password"
@@ -125,7 +128,7 @@ export default function UserListClient({ users }: { users: UserRow[] }) {
                         placeholder="Neues Passwort"
                         className="input-base text-sm flex-1"
                       />
-                      <GlowButton variant="secondary" className="px-3 py-2 text-sm">
+                      <GlowButton variant="secondary" className="px-3 py-2 text-sm whitespace-nowrap">
                         Passwort ändern
                       </GlowButton>
                     </form>

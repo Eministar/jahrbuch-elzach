@@ -62,7 +62,7 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
         <div className="absolute top-1/3 -right-32 h-[420px] w-[420px] rounded-full bg-[#8faf9d]/6 blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-12 space-y-10">
+      <div className="max-w-6xl mx-auto px-4 py-12 space-y-10">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-[#e89a7a]/10 border border-[#e89a7a]/20">
             <Shield className="h-4 w-4 text-[#e89a7a]" />
@@ -117,12 +117,12 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left: Users list */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 lg:space-y-8 min-w-0">
             <GlassCard
               header={
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#e89a7a]/10 text-[#e89a7a]">
                       <Users className="h-5 w-5"/>
@@ -132,24 +132,24 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
                       <p className="text-sm text-[#b8aea5]">Rollen, Passwörter und Login-Links verwalten.</p>
                     </div>
                   </div>
-                  <a href="/admin" className="text-sm text-[#e89a7a] hover:underline inline-flex items-center gap-1">
+                  <a href="/admin" className="text-sm text-[#e89a7a] hover:underline inline-flex items-center gap-1 whitespace-nowrap">
                     <ArrowLeft className="h-3 w-3" />
                     Zurück
                   </a>
                 </div>
               }
             >
-              <form method="GET" className="mb-6 flex flex-wrap items-center gap-3">
-                <input type="text" name="q" defaultValue={q} placeholder="Suche Username" className="input-base flex-1 min-w-[200px]" />
-                <select name="class" defaultValue={classFilter} className="input-base min-w-[160px]">
+              <form method="GET" className="mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
+                <input type="text" name="q" defaultValue={q} placeholder="Suche Username" className="input-base flex-1 min-w-[180px]" />
+                <select name="class" defaultValue={classFilter} className="input-base sm:min-w-[140px]">
                   <option value="">Alle Klassen</option>
                   <option value="none">Ohne Klasse</option>
                   {CLASSES.map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
-                <GlowButton variant="primary" className="px-5">Filtern</GlowButton>
-                <a href="/admin/user" className="text-sm text-[#e89a7a] hover:underline">Zurücksetzen</a>
+                <GlowButton variant="primary" className="px-5 whitespace-nowrap">Filtern</GlowButton>
+                <a href="/admin/user" className="text-sm text-[#e89a7a] hover:underline whitespace-nowrap">Zurücksetzen</a>
               </form>
 
               <UserListClient users={users} />
@@ -157,7 +157,7 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
           </div>
 
           {/* Right: Create + Ban */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-6 min-w-0">
             <GlassCard
               header={
                 <div className="flex items-center gap-3">
@@ -168,17 +168,19 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
                 </div>
               }
             >
-              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+              <div className="space-y-2 max-h-[400px] overflow-y-auto overflow-x-hidden">
                 {groups.map((g) => (
-                  <details key={g.label} className="rounded-xl border border-[#e89a7a]/10 bg-[#2a2520]/40 p-3 hover:border-[#e89a7a]/20 transition-all">
+                  <details key={g.label} className="rounded-xl border border-[#e89a7a]/10 bg-[#2a2520]/40 p-2 hover:border-[#e89a7a]/20 transition-all">
                     <summary className="cursor-pointer select-none text-sm text-[#f5f1ed] flex items-center justify-between font-medium">
-                      <span>{g.label}</span>
-                      <span className="text-xs text-[#b8aea5]">{g.items.length}</span>
+                      <span className="truncate">{g.label}</span>
+                      <span className="text-xs text-[#b8aea5] ml-2 shrink-0">{g.items.length}</span>
                     </summary>
                     {g.items.length === 0 ? (
                       <div className="mt-2 text-xs text-[#b8aea5]">Keine Nutzer</div>
                     ) : (
-                      <UserListClient users={g.items} />
+                      <div className="mt-2">
+                        <UserListClient users={g.items} />
+                      </div>
                     )}
                   </details>
                 ))}
@@ -218,27 +220,27 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
                 <div>
                   <div className="text-sm font-semibold mb-3 text-[#f5f1ed]">Benutzer sperren</div>
                   <form action={banUserAction} className="space-y-3">
-                    <input name="user_id" placeholder="User ID" className="input-base" />
-                    <input name="reason" placeholder="Grund (optional)" className="input-base" />
-                    <input name="expires_at" type="datetime-local" className="input-base" />
+                    <input name="user_id" placeholder="User ID" className="input-base w-full" />
+                    <input name="reason" placeholder="Grund (optional)" className="input-base w-full" />
+                    <input name="expires_at" type="datetime-local" className="input-base w-full" />
                     <GlowButton variant="primary" className="w-full">Sperren</GlowButton>
                   </form>
-                  <form action={unbanUserAction} className="flex items-center gap-2 mt-3">
+                  <form action={unbanUserAction} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-3">
                     <input name="user_id" placeholder="User ID" className="input-base flex-1" />
-                    <GlowButton variant="secondary" className="px-4">Entsperren</GlowButton>
+                    <GlowButton variant="secondary" className="px-4 whitespace-nowrap">Entsperren</GlowButton>
                   </form>
                 </div>
                 <div className="pt-3 border-t border-[#e89a7a]/10">
                   <div className="text-sm font-semibold mb-3 text-[#f5f1ed]">IP sperren</div>
                   <form action={banIpAction} className="space-y-3">
-                    <input name="ip" placeholder="IP-Adresse" className="input-base" />
-                    <input name="reason" placeholder="Grund (optional)" className="input-base" />
-                    <input name="expires_at" type="datetime-local" className="input-base" />
+                    <input name="ip" placeholder="IP-Adresse" className="input-base w-full" />
+                    <input name="reason" placeholder="Grund (optional)" className="input-base w-full" />
+                    <input name="expires_at" type="datetime-local" className="input-base w-full" />
                     <GlowButton variant="primary" className="w-full">Sperren</GlowButton>
                   </form>
-                  <form action={unbanIpAction} className="flex items-center gap-2 mt-3">
+                  <form action={unbanIpAction} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-3">
                     <input name="ip" placeholder="IP-Adresse" className="input-base flex-1" />
-                    <GlowButton variant="secondary" className="px-4">Entsperren</GlowButton>
+                    <GlowButton variant="secondary" className="px-4 whitespace-nowrap">Entsperren</GlowButton>
                   </form>
                 </div>
               </div>
