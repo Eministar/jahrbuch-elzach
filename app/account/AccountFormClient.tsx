@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from 'react';
-import Image from 'next/image';
 import GlowButton from '@/components/ui/GlowButton';
 import { withBasePath } from '@/lib/url';
+import BannerImage from '@/components/BannerImage';
+import AvatarImage from '@/components/AvatarImage';
 
 export default function AccountFormClient({ initialBio, initialAvatarUrl, initialBannerUrl }: { initialBio: string | null; initialAvatarUrl: string | null; initialBannerUrl: string | null; }) {
   const [bio, setBio] = useState(initialBio || "");
@@ -104,26 +105,16 @@ export default function AccountFormClient({ initialBio, initialAvatarUrl, initia
         <label className="block text-sm font-medium text-[#f5f1ed]">Profil-Banner</label>
         <div className="rounded-xl overflow-hidden bg-[#38302b] border border-[#e89a7a]/20">
           {bannerUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={withBasePath(bannerUrl) || undefined}
+            <BannerImage
+              src={withBasePath(bannerUrl)}
               alt="Banner"
               className="w-full h-40 object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                if (target.nextElementSibling) {
-                  (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                }
-              }}
             />
-          ) : null}
-          <div
-            className="w-full h-40 flex items-center justify-center text-[#b8aea5] text-sm"
-            style={{ display: bannerUrl ? 'none' : 'flex' }}
-          >
-            Kein Banner
-          </div>
+          ) : (
+            <div className="w-full h-40 flex items-center justify-center text-[#b8aea5] text-sm">
+              Kein Banner
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <input type="file" accept="image/*" onChange={handleBannerUpload} className="block text-sm text-[#b8aea5] file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#e89a7a]/20 file:text-[#e89a7a] hover:file:bg-[#e89a7a]/30" />
@@ -141,8 +132,11 @@ export default function AccountFormClient({ initialBio, initialAvatarUrl, initia
       <div className="flex items-start gap-6">
         <div className="w-24 h-24 rounded-xl overflow-hidden bg-[#38302b] flex items-center justify-center border border-[#e89a7a]/20">
           {avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            <AvatarImage
+              src={avatarUrl}
+              alt="Avatar"
+              className="w-full h-full"
+            />
           ) : (
             <span className="text-[#b8aea5] text-sm">Kein Bild</span>
           )}

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import GlowButton from "@/components/ui/GlowButton";
 import { LogOut, Menu, Home, Send, Shield, BookOpen, FileText, Lock, Users, BarChart3, Sparkles, HelpCircle, ShieldAlert, AlertCircle, Heart, Info, DollarSign, User } from "lucide-react";
 import { withBasePath } from "@/lib/url";
+import AvatarImage from "@/components/AvatarImage";
 
 async function logout() {
   "use server";
@@ -40,27 +41,12 @@ export default async function Header() {
         <div className="flex items-center gap-4 backdrop-blur-xl bg-[#2a2520]/95 rounded-2xl pl-6 pr-3 py-3 shadow-lg border border-[#e89a7a]/10">
           <span className="inline-flex items-center gap-3 text-sm text-[#b8aea5]">
             <div className="flex items-center justify-center w-9 h-9 rounded-xl overflow-hidden bg-gradient-to-br from-[#d97757] to-[#c96846] text-white shadow-md">
-              {avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={withBasePath(avatarUrl) || undefined}
-                  alt="Avatar"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    if (target.nextElementSibling) {
-                      (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                    }
-                  }}
-                />
-              ) : null}
-              <div
-                className="w-full h-full flex items-center justify-center"
-                style={{ display: avatarUrl ? 'none' : 'flex' }}
-              >
-                <BookOpen className="h-4 w-4" />
-              </div>
+              <AvatarImage
+                src={withBasePath(avatarUrl)}
+                alt="Avatar"
+                className="w-full h-full"
+                fallbackIcon={<BookOpen className="h-4 w-4" />}
+              />
             </div>
             <span>
               Willkommen,{" "}
@@ -230,27 +216,12 @@ export default async function Header() {
         <div className="flex items-center justify-between backdrop-blur-xl bg-[#2a2520]/95 rounded-2xl px-5 py-3 shadow-lg border border-[#e89a7a]/10">
           <span className="inline-flex items-center gap-2.5 text-sm">
             <div className="flex items-center justify-center w-8 h-8 rounded-lg overflow-hidden bg-gradient-to-br from-[#d97757] to-[#c96846] text-white shadow-md">
-              {avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={withBasePath(avatarUrl) || undefined}
-                  alt="Avatar"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    if (target.nextElementSibling) {
-                      (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                    }
-                  }}
-                />
-              ) : null}
-              <div
-                className="w-full h-full flex items-center justify-center"
-                style={{ display: avatarUrl ? 'none' : 'flex' }}
-              >
-                <BookOpen className="h-4 w-4" />
-              </div>
+              <AvatarImage
+                src={withBasePath(avatarUrl)}
+                alt="Avatar"
+                className="w-full h-full"
+                fallbackIcon={<BookOpen className="h-4 w-4" />}
+              />
             </div>
             <span className="font-medium text-[#f5f1ed]">{username}</span>
           </span>

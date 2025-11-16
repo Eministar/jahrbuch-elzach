@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { BookOpen, Shield } from "lucide-react";
 import { withBasePath } from "@/lib/url";
+import AvatarImage from "@/components/AvatarImage";
+import BannerImage from "@/components/BannerImage";
 
 export type PublicUser = {
   id: number;
@@ -137,28 +139,12 @@ export default function ProfileAvatar({ userId, username, avatarUrl, size = 28, 
         style={{ width: size, height: size }}
         title={label}
       >
-        {avatar ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={avatarSrc || undefined}
-            alt={label}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              // Fallback wenn Bild nicht geladen werden kann
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-              if (target.nextElementSibling) {
-                (target.nextElementSibling as HTMLElement).style.display = 'flex';
-              }
-            }}
-          />
-        ) : null}
-        <div
-          className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#d97757] to-[#c96846] text-white"
-          style={{ display: avatar ? 'none' : 'flex' }}
-        >
-          <BookOpen className="w-3.5 h-3.5" />
-        </div>
+        <AvatarImage
+          src={avatarSrc}
+          alt={label}
+          className="w-full h-full"
+          fallbackIcon={<BookOpen className="w-3.5 h-3.5" />}
+        />
       </div>
 
       {open && typeof window !== 'undefined' && createPortal(
@@ -171,48 +157,41 @@ export default function ProfileAvatar({ userId, username, avatarUrl, size = 28, 
         >
           {user?.banner_url && (
             <div className="-mt-1 -mx-1 mb-3 relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={bannerSrc || undefined}
+              <BannerImage
+                src={bannerSrc}
                 alt="Profilbanner"
                 className="w-full h-20 object-cover rounded-xl border border-[#e89a7a]/20"
-                onError={(e) => {
-                  // Verstecke Banner wenn Bild nicht geladen werden kann
-                  const target = e.target as HTMLImageElement;
-                  const parent = target.parentElement;
-                  if (parent) {
-                    parent.style.display = 'none';
-                  }
-                }}
                 onLoad={() => {
-                  const btn = btnRef.current; const pop = popRef.current; if (!btn || !pop) return; const rect = btn.getBoundingClientRect(); const spacing = 8; const popRect = pop.getBoundingClientRect(); let top = rect.bottom + spacing; let placement: 'top' | 'bottom' = 'bottom'; if (top + popRect.height > window.innerHeight - 8) { top = Math.max(8, rect.top - spacing - popRect.height); placement = 'top'; } let left = rect.left; if (left + popRect.width > window.innerWidth - 8) { left = Math.max(8, window.innerWidth - 8 - popRect.width); } if (left < 8) left = 8; setPos({ top, left, placement });
+                  const btn = btnRef.current;
+                  const pop = popRef.current;
+                  if (!btn || !pop) return;
+                  const rect = btn.getBoundingClientRect();
+                  const spacing = 8;
+                  const popRect = pop.getBoundingClientRect();
+                  let top = rect.bottom + spacing;
+                  let placement: 'top' | 'bottom' = 'bottom';
+                  if (top + popRect.height > window.innerHeight - 8) {
+                    top = Math.max(8, rect.top - spacing - popRect.height);
+                    placement = 'top';
+                  }
+                  let left = rect.left;
+                  if (left + popRect.width > window.innerWidth - 8) {
+                    left = Math.max(8, window.innerWidth - 8 - popRect.width);
+                  }
+                  if (left < 8) left = 8;
+                  setPos({ top, left, placement });
                 }}
               />
             </div>
           )}
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#e89a7a]/20">
-              {avatar ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={avatarSrc || undefined}
-                  alt={label}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    if (target.nextElementSibling) {
-                      (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                    }
-                  }}
-                />
-              ) : null}
-              <div
-                className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#d97757] to-[#c96846] text-white"
-                style={{ display: avatar ? 'none' : 'flex' }}
-              >
-                <BookOpen className="w-5 h-5" />
-              </div>
+              <AvatarImage
+                src={avatarSrc}
+                alt={label}
+                className="w-full h-full"
+                fallbackIcon={<BookOpen className="w-5 h-5" />}
+              />
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold text-[#f5f1ed] flex items-center gap-2">
