@@ -62,7 +62,7 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
         <div className="absolute top-1/3 -right-32 h-[420px] w-[420px] rounded-full bg-[#8faf9d]/6 blur-3xl" />
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-12 space-y-10">
+      <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-12 space-y-10 overflow-x-hidden">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-[#e89a7a]/10 border border-[#e89a7a]/20">
             <Shield className="h-4 w-4 text-[#e89a7a]" />
@@ -117,9 +117,9 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Left: Users list */}
-          <div className="lg:col-span-2 space-y-6 lg:space-y-8 min-w-0">
+          <div className="flex-1 space-y-6 lg:space-y-8 min-w-0 lg:max-w-[65%]">
             <GlassCard
               header={
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -157,7 +157,7 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
           </div>
 
           {/* Right: Create + Ban */}
-          <div className="lg:col-span-1 space-y-6 min-w-0">
+          <div className="lg:w-[380px] flex-shrink-0 space-y-6 min-w-0">
             <GlassCard
               header={
                 <div className="flex items-center gap-3">
