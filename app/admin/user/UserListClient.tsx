@@ -33,15 +33,15 @@ export default function UserListClient({ users, compact = false }: { users: User
             key={u.id}
             className="px-3 py-2 rounded-lg bg-[#2a2520]/60 hover:bg-[#38302b]/60 transition-colors"
           >
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 text-sm min-w-0">
               <ProfileAvatar userId={u.id} username={u.username} size={20} />
-              <span className="text-[#f5f1ed] truncate flex-1">{u.username}</span>
+              <span className="text-[#f5f1ed] truncate flex-1 min-w-0">{u.username}</span>
               <span className="text-xs text-[#b8aea5] shrink-0">#{u.id}</span>
             </div>
           </div>
         ))
       ) : (
-        // Full view - show all users expanded by default
+        // Full view - show all users, each Eintrag einklappbar
         users.map((u) => {
           const isExpanded = expandedId === u.id;
           return (
@@ -49,30 +49,32 @@ export default function UserListClient({ users, compact = false }: { users: User
               key={u.id}
               className="rounded-xl border border-[#e89a7a]/15 bg-[#2a2520]/60 hover:border-[#e89a7a]/25 transition-all overflow-hidden"
             >
-              {/* Compact header - always visible */}
+              {/* Compact header */}
               <button
                 onClick={() => setExpandedId(isExpanded ? null : u.id)}
                 className="w-full px-2 sm:px-3 py-2 sm:py-3 flex items-center justify-between gap-1 sm:gap-2 text-left hover:bg-[#38302b]/30 transition-colors"
               >
                 <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0 overflow-hidden">
                   <ProfileAvatar userId={u.id} username={u.username} size={24} />
-                  <span className="font-semibold text-[#f5f1ed] truncate text-xs sm:text-sm">{u.username}</span>
-                  <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full bg-[#e89a7a]/10 text-[#e89a7a] border border-[#e89a7a]/20 text-xs font-medium shrink-0">
+                  <span className="font-semibold text-[#f5f1ed] truncate text-xs sm:text-sm min-w-0">
+                    {u.username}
+                  </span>
+                  <span className="hidden xs:inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full bg-[#e89a7a]/10 text-[#e89a7a] border border-[#e89a7a]/20 text-[10px] sm:text-xs font-medium shrink-0 whitespace-nowrap">
                     {u.role}
                   </span>
                   {u.class && (
-                    <span className="hidden xl:inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full bg-[#8faf9d]/10 text-[#8faf9d] border border-[#8faf9d]/20 text-xs font-medium shrink-0">
+                    <span className="hidden lg:inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full bg-[#8faf9d]/10 text-[#8faf9d] border border-[#8faf9d]/20 text-[10px] sm:text-xs font-medium shrink-0 whitespace-nowrap">
                       {u.class}
                     </span>
                   )}
                   <span
-                    className={`hidden 2xl:inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${
+                    className={`hidden xl:inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium shrink-0 whitespace-nowrap ${
                       u.has_voted
                         ? "bg-[#8faf9d]/10 text-[#8faf9d]"
                         : "bg-[#d97757]/10 text-[#d97757]"
                     }`}
                   >
-                    {u.has_voted ? "✓" : "○"}
+                    {u.has_voted ? "✓ abgestimmt" : "○ nicht"}
                   </span>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-2 shrink-0">
@@ -87,9 +89,9 @@ export default function UserListClient({ users, compact = false }: { users: User
 
               {/* Expanded details */}
               {isExpanded && (
-                <div className="px-3 pb-4 space-y-4 border-t border-[#e89a7a]/10">
-                  {/* Mobile: show class and vote status if hidden above */}
-                  <div className="lg:hidden flex flex-wrap gap-2 pt-3">
+                <div className="px-3 pb-4 space-y-4 border-top border-[#e89a7a]/10">
+                  {/* Mobile chips */}
+                  <div className="flex flex-wrap gap-2 pt-3 lg:hidden">
                     {u.class && (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#8faf9d]/10 text-[#8faf9d] border border-[#8faf9d]/20 text-xs font-medium">
                         {u.class}
@@ -112,14 +114,24 @@ export default function UserListClient({ users, compact = false }: { users: User
                   {/* Role & Password */}
                   <div className="pt-3 space-y-3">
                     <div className="flex flex-col gap-2">
-                      <form action={updateUserRoleAction} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      <form
+                        action={updateUserRoleAction}
+                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 min-w-0"
+                      >
                         <input type="hidden" name="id" value={u.id} />
-                        <select name="role" defaultValue={u.role} className="input-base text-sm flex-1">
+                        <select
+                          name="role"
+                          defaultValue={u.role}
+                          className="input-base text-sm flex-1 min-w-0"
+                        >
                           <option value="user">user</option>
                           <option value="moderator">moderator</option>
                           <option value="admin">admin</option>
                         </select>
-                        <GlowButton variant="primary" className="px-3 py-2 text-sm whitespace-nowrap">
+                        <GlowButton
+                          variant="primary"
+                          className="px-3 py-2 text-sm whitespace-nowrap"
+                        >
                           Rolle ändern
                         </GlowButton>
                       </form>
@@ -127,7 +139,7 @@ export default function UserListClient({ users, compact = false }: { users: User
                         <input type="hidden" name="id" value={u.id} />
                         <GlowButton
                           variant="secondary"
-                          className="px-3 py-2 text-sm w-full"
+                          className="px-3 py-2 text-sm w-full sm:w-auto"
                           iconLeft={<Trash2 className="h-4 w-4" />}
                         >
                           Löschen
@@ -135,7 +147,10 @@ export default function UserListClient({ users, compact = false }: { users: User
                       </form>
                     </div>
 
-                    <form action={updateUserPasswordAction} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <form
+                      action={updateUserPasswordAction}
+                      className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 min-w-0"
+                    >
                       <input type="hidden" name="id" value={u.id} />
                       <input
                         name="password"
@@ -143,7 +158,10 @@ export default function UserListClient({ users, compact = false }: { users: User
                         placeholder="Neues Passwort"
                         className="input-base text-sm flex-1 min-w-0"
                       />
-                      <GlowButton variant="secondary" className="px-3 py-2 text-sm whitespace-nowrap">
+                      <GlowButton
+                        variant="secondary"
+                        className="px-3 py-2 text-sm whitespace-nowrap"
+                      >
                         Passwort ändern
                       </GlowButton>
                     </form>
@@ -194,4 +212,3 @@ export default function UserListClient({ users, compact = false }: { users: User
     </div>
   );
 }
-

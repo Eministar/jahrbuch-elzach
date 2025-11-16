@@ -62,7 +62,7 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
         <div className="absolute top-1/3 -right-32 h-[420px] w-[420px] rounded-full bg-[#8faf9d]/6 blur-3xl" />
       </div>
 
-      <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-12 space-y-10 overflow-x-hidden">
+      <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-12 space-y-10">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-[#e89a7a]/10 border border-[#e89a7a]/20">
             <Shield className="h-4 w-4 text-[#e89a7a]" />
@@ -119,7 +119,7 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Left: Users list */}
-          <div className="flex-1 space-y-6 lg:space-y-8 min-w-0 lg:max-w-[65%]">
+          <div className="flex-[2_1_0%] min-w-0 space-y-6 lg:space-y-8">
             <GlassCard
               header={
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -139,7 +139,10 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
                 </div>
               }
             >
-              <form method="GET" className="mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
+              <form
+                method="GET"
+                className="mb-4 sm:mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3"
+              >
                 <input type="text" name="q" defaultValue={q} placeholder="Suche Username" className="input-base flex-1 min-w-[180px]" />
                 <select name="class" defaultValue={classFilter} className="input-base sm:min-w-[140px]">
                   <option value="">Alle Klassen</option>
@@ -152,12 +155,15 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
                 <a href="/admin/user" className="text-sm text-[#e89a7a] hover:underline whitespace-nowrap">Zurücksetzen</a>
               </form>
 
-              <UserListClient users={users} />
+              {/* User list with own scroll if very many entries */}
+              <div className="max-h-[calc(100vh-360px)] lg:max-h-[calc(100vh-340px)] overflow-y-auto pr-1">
+                <UserListClient users={users} />
+              </div>
             </GlassCard>
           </div>
 
           {/* Right: Create + Ban */}
-          <div className="lg:w-[380px] flex-shrink-0 space-y-6 min-w-0">
+          <div className="w-full lg:w-[320px] xl:w-[360px] flex-shrink space-y-6 min-w-0">
             <GlassCard
               header={
                 <div className="flex items-center gap-3">
