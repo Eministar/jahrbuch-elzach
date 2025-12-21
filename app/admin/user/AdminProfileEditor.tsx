@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import GlowButton from '@/components/ui/GlowButton';
 import ProfileAvatar from '@/components/ProfileAvatar';
-import { withBasePath } from '@/lib/url';
 
 type PublicUser = {
   id: number;

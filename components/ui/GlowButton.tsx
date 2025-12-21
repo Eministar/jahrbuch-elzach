@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react";
 type BaseProps = {
   className?: string;
   loading?: boolean;
+  disabled?: boolean;
   variant?: "primary" | "secondary" | "ghost" | "gradient";
   iconLeft?: ReactNode;
   iconRight?: ReactNode;
@@ -30,11 +31,14 @@ export default function GlowButton({
   children,
   as = "button",
   loading,
+  disabled,
   variant = "primary",
   iconLeft,
   iconRight,
   ...rest
 }: Props) {
+  const isActuallyDisabled = disabled || loading;
+
   const styles: Record<string, string> = {
     primary: [
       "bg-gradient-to-br from-[#d97757] to-[#c96846]",
@@ -84,17 +88,20 @@ export default function GlowButton({
     "transition-all duration-300 ease-out",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d97757] focus-visible:ring-offset-2",
     "focus-visible:ring-offset-[#1a1714]",
-    "active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60",
-    "hover:scale-[1.02] active:translate-y-[1px]",
+    "active:scale-[0.97]",
+    isActuallyDisabled ? "cursor-not-allowed opacity-60 pointer-events-none" : "hover:scale-[1.02] active:translate-y-[1px]",
     styles[variant],
-    className,
-    loading && "cursor-not-allowed opacity-70"
+    className
   );
 
   if (as === "a") {
     const anchorProps = rest as AnchorHTMLAttributes<HTMLAnchorElement>;
     return (
-      <a className={base} {...anchorProps}>
+      <a 
+        className={base} 
+        aria-disabled={isActuallyDisabled}
+        {...anchorProps}
+      >
         {iconLeft}
         <span className="relative flex items-center gap-2">
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -110,7 +117,7 @@ export default function GlowButton({
     <button
       className={base}
       {...buttonProps}
-      disabled={loading || buttonProps.disabled}
+      disabled={isActuallyDisabled}
     >
       {iconLeft}
       <span className="relative flex items-center gap-2">

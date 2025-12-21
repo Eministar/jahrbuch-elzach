@@ -3,13 +3,11 @@ import { getSession } from "@/lib/session";
 import { query } from "@/lib/db";
 import GlassCard from "@/components/ui/GlassCard";
 import GlowButton from "@/components/ui/GlowButton";
-import LoginLinkClient from "./LoginLinkClient";
-import ResetPollClient from "./ResetPollClient";
 import UserListClient from "./UserListClient";
 import ClassPdfGenerator from "./ClassPdfGenerator";
 import NewUserForm from "./NewUserForm";
-import { createUserAction, deleteUserAction, updateUserPasswordAction, updateUserRoleAction, banUserAction, unbanUserAction, banIpAction, unbanIpAction } from "../actions";
-import { Users, Shield, KeyRound, UserPlus, Trash2, QrCode, Ban, ArrowLeft, CheckCircle2, FileDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { banUserAction, unbanUserAction, banIpAction, unbanIpAction } from "../actions";
+import { Users, Shield, KeyRound, UserPlus, Ban, ArrowLeft, FileDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { ensureUserClassColumn, ensurePollSubmissionsTable } from "@/lib/migrations";
 import { CLASSES } from "@/lib/constants";
 
