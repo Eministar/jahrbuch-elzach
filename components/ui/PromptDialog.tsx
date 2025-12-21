@@ -1,6 +1,6 @@
 'use client';
 
-import { X, MessageSquare } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface PromptDialogProps {

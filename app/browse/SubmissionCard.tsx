@@ -12,7 +12,6 @@ interface SubmissionCardProps {
   submission: Submission;
   userVote: 'upvote' | 'downvote' | null;
   isModerator: boolean;
-  currentUserId: number;
   onVote: (submissionId: number, voteType: 'upvote' | 'downvote') => Promise<void>;
   onReport: (submissionId: number, reason: string) => Promise<boolean>;
   onModerate: (submissionId: number, action: 'delete' | 'ban', reason?: string) => Promise<boolean>;
@@ -22,7 +21,6 @@ export default function SubmissionCard({
   submission,
   userVote: initialUserVote,
   isModerator,
-  currentUserId,
   onVote,
   onReport,
   onModerate,
@@ -415,7 +413,6 @@ export default function SubmissionCard({
       {/* Comment Section */}
       <CommentSection
         submissionId={submission.id}
-        currentUserId={currentUserId}
         isModerator={isModerator}
       />
     </div>

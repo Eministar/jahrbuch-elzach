@@ -14,7 +14,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
   // Leere Funktionen, da das Theme nicht mehr geändert werden kann
   const toggle = () => {};
-  const set = (_newTheme: Theme) => {};
+  const set = () => {};
 
   return (
     <ThemeContext.Provider value={{ theme, toggle, set }}>

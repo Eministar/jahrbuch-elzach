@@ -22,13 +22,11 @@ interface Comment {
 
 interface CommentSectionProps {
   submissionId: number;
-  currentUserId: number;
   isModerator: boolean;
 }
 
 export default function CommentSection({
   submissionId,
-  currentUserId,
   isModerator
 }: CommentSectionProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -215,7 +213,6 @@ export default function CommentSection({
       <div key={comment.id}>
         <CommentItem
           comment={comment}
-          currentUserId={currentUserId}
           isModerator={isModerator}
           onReply={handleReply}
           onVote={handleVote}

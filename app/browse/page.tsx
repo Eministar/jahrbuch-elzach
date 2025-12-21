@@ -139,7 +139,6 @@ export default async function BrowsePage({
           <BrowseClient
             initialSubmissions={submissions}
             isModerator={isModerator}
-            currentUserId={session.userId}
             currentSort={sortBy}
             currentCategory={filterCategory}
             categories={['all', ...CATEGORIES]}

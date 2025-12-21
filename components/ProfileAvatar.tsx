@@ -64,7 +64,7 @@ export default function ProfileAvatar({ userId, username, avatarUrl, size = 28, 
       })
       .catch(() => {});
     return () => { active = false; };
-  }, [userId]);
+  }, [userId, avatarUrl, user?.avatar_url]);
 
   useEffect(() => {
     if (!open) return;
@@ -79,7 +79,7 @@ export default function ProfileAvatar({ userId, username, avatarUrl, size = 28, 
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [open, userId]);
+  }, [open, userId, user]);
 
   // Compute and update popover viewport position when opened and on scroll/resize
   useEffect(() => {

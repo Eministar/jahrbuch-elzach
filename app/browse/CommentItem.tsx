@@ -20,7 +20,6 @@ interface CommentItemProps {
     is_author: boolean;
     parent_id: number | null;
   };
-  currentUserId: number;
   isModerator: boolean;
   onReply: (commentId: number) => void;
   onVote: (commentId: number, voteType: 'upvote' | 'downvote') => Promise<void>;
@@ -31,7 +30,6 @@ interface CommentItemProps {
 
 export default function CommentItem({
   comment,
-  currentUserId,
   isModerator,
   onReply,
   onVote,

@@ -56,7 +56,7 @@ export default function PollForm({ userId }: { userId: number }) {
         setPollData(data);
         setLoading(false);
       })
-      .catch((_error) => {
+      .catch(() => {
         setLoading(false);
       });
   }, []);
@@ -105,7 +105,7 @@ export default function PollForm({ userId }: { userId: number }) {
       } else {
         alert("Fehler beim Absenden. Bitte versuche es erneut.");
       }
-    } catch (_error) {
+    } catch {
       alert("Netzwerkfehler. Bitte versuche es später erneut.");
     } finally {
       setSubmitting(false);

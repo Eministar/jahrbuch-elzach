@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     const loginUrl = `${baseUrl}/login`;
 
     // Helpers
-    const drawPageHeader = (p: number, total: number) => {
+    const drawPageHeader = () => {
       // Schlanker Kopf: Linie + Titel + Klasse + Datum
       doc.setDrawColor(217, 119, 87); // #d97757
       doc.setLineWidth(0.6);
@@ -199,7 +199,7 @@ export async function GET(request: NextRequest) {
     let userIndex = 0;
     for (let p = 1; p <= totalPages; p++) {
       if (p > 1) doc.addPage();
-      drawPageHeader(p, totalPages);
+      drawPageHeader();
       drawCutGrid();
 
       for (let r = 0; r < rowsPerPage; r++) {

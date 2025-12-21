@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/session';
 import { getAuthState } from '@/lib/auth';
 import { getDbPool } from '@/lib/db';
 import { ensureModerationSchema } from '@/lib/migrations';

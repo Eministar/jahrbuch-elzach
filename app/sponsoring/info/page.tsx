@@ -1,6 +1,6 @@
 import Link from "next/link";
 import GlassCard from "@/components/ui/GlassCard";
-import { Heart, Mail, ArrowLeft, CheckCircle, Info, DollarSign, Star } from "lucide-react";
+import { Heart, Mail, ArrowLeft, CheckCircle, Info, Star } from "lucide-react";
 
 export const metadata = {
   title: "Sponsoring Info - Jahrbuch Elzach",

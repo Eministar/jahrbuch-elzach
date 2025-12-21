@@ -9,7 +9,6 @@ import { Filter, ArrowUpDown } from 'lucide-react';
 interface BrowseClientProps {
   initialSubmissions: Submission[];
   isModerator: boolean;
-  currentUserId: number;
   currentSort: string;
   currentCategory: string;
   categories: string[];
@@ -18,13 +17,12 @@ interface BrowseClientProps {
 export default function BrowseClient({
   initialSubmissions,
   isModerator,
-  currentUserId,
   currentSort,
   currentCategory,
   categories,
 }: BrowseClientProps) {
   const [submissions, setSubmissions] = useState(initialSubmissions);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -52,7 +50,7 @@ export default function BrowseClient({
         if (!isCancelled && data && Array.isArray(data.submissions)) {
           setSubmissions(data.submissions);
         }
-      } catch (e) {
+      } catch {
         // ignore abort/errors to avoid noisy logs
       }
     }
@@ -242,7 +240,6 @@ export default function BrowseClient({
                 submission={submission}
                 userVote={submission.user_vote}
                 isModerator={isModerator}
-                currentUserId={currentUserId}
                 onVote={handleVote}
                 onReport={handleReport}
                 onModerate={handleModerate}

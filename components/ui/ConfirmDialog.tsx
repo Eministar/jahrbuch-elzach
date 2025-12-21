@@ -1,6 +1,6 @@
 'use client';
 
-import { X, AlertTriangle, Info, AlertCircle } from 'lucide-react';
+import { AlertTriangle, Info, AlertCircle } from 'lucide-react';
 import { useEffect } from 'react';
 
 interface ConfirmDialogProps {
