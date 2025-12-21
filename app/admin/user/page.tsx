@@ -9,7 +9,7 @@ import UserListClient from "./UserListClient";
 import ClassPdfGenerator from "./ClassPdfGenerator";
 import NewUserForm from "./NewUserForm";
 import { createUserAction, deleteUserAction, updateUserPasswordAction, updateUserRoleAction, banUserAction, unbanUserAction, banIpAction, unbanIpAction } from "../actions";
-import { Users, Shield, KeyRound, UserPlus, Trash2, QrCode, Ban, ArrowLeft, CheckCircle2, FileDown } from "lucide-react";
+import { Users, Shield, KeyRound, UserPlus, Trash2, QrCode, Ban, ArrowLeft, CheckCircle2, FileDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { ensureUserClassColumn, ensurePollSubmissionsTable } from "@/lib/migrations";
 import { CLASSES } from "@/lib/constants";
 
@@ -28,32 +28,51 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
   const sp = await searchParams;
   const q = typeof sp?.q === "string" ? sp.q.trim() : "";
   const classFilter = typeof sp?.class === "string" ? sp.class.trim() : "";
+  const page = typeof sp?.page === "string" ? Math.max(1, parseInt(sp.page) || 1) : 1;
+  const limit = 50;
+  const offset = (page - 1) * limit;
 
   const where: string[] = [];
-  const params: string[] = [];
+  const params: (string | number)[] = [];
   if (q) { where.push("u.username LIKE ?"); params.push(`%${q}%`); }
   if (classFilter === "none") { where.push("u.class IS NULL"); }
   else if (classFilter) { where.push("u.class = ?"); params.push(classFilter); }
   const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
 
+  // Total count for pagination
+  const countResult = await query<{total: number}[]>(
+    `SELECT COUNT(*) as total FROM users u ${whereSql}`,
+    params
+  );
+  const totalUsersInFilter = countResult[0]?.total || 0;
+  const totalPages = Math.ceil(totalUsersInFilter / limit);
+
+  // Stats - query separately to be accurate for ALL users, not just filtered/paginated
+  const statsRows = await query<{role: string, count: number}[]>(
+    `SELECT role, COUNT(*) as count FROM users GROUP BY role`
+  );
+  const stats = {
+    total: statsRows.reduce((acc, row) => acc + row.count, 0),
+    admins: statsRows.find(r => r.role === 'admin')?.count || 0,
+    moderators: statsRows.find(r => r.role === 'moderator')?.count || 0,
+    users: statsRows.find(r => r.role === 'user')?.count || 0,
+  };
+
+  // Grouped counts for sidebar (always for all users)
+  const groupRows = await query<{class: string | null, count: number}[]>(
+    `SELECT class, COUNT(*) as count FROM users GROUP BY class`
+  );
+  const groups = [
+    { label: 'Ohne Klasse', count: groupRows.find(r => r.class === null)?.count || 0, value: 'none' },
+    ...CLASSES.map((c) => ({ label: c, count: groupRows.find(r => r.class === c)?.count || 0, value: c })),
+  ];
+
   const users = await query<UserRow[]>(
     `SELECT u.id, u.username, u.role, u.class, 
      COALESCE((SELECT 1 FROM poll_submissions ps WHERE ps.user_id = u.id LIMIT 1), 0) as has_voted
-     FROM users u ${whereSql} ORDER BY u.id DESC`,
-    params
+     FROM users u ${whereSql} ORDER BY u.id DESC LIMIT ? OFFSET ?`,
+    [...params, limit, offset]
   );
-
-  const stats = {
-    total: users.length,
-    admins: users.filter((u) => u.role === 'admin').length,
-    moderators: users.filter((u) => u.role === 'moderator').length,
-    users: users.filter((u) => u.role === 'user').length,
-  };
-
-  const groups = [
-    { label: 'Ohne Klasse', items: users.filter((u) => !u.class) },
-    ...CLASSES.map((c) => ({ label: c, items: users.filter((u) => u.class === c) })),
-  ];
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-[#1a1714] via-[#221e1a] to-[#1a1714]">
@@ -159,6 +178,39 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
               <div className="max-h-[calc(100vh-360px)] lg:max-h-[calc(100vh-340px)] overflow-y-auto pr-1">
                 <UserListClient users={users} />
               </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-6 pt-6 border-t border-[#e89a7a]/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-sm text-[#b8aea5]">
+                    Seite <span className="text-[#f5f1ed] font-medium">{page}</span> von <span className="text-[#f5f1ed] font-medium">{totalPages}</span>
+                    <span className="ml-2 text-xs">({totalUsersInFilter} Benutzer gesamt)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <GlowButton
+                      as="a"
+                      variant="secondary"
+                      disabled={page <= 1}
+                      href={page <= 1 ? undefined : `/admin/user?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ""}${classFilter ? `&class=${encodeURIComponent(classFilter)}` : ""}`}
+                      className="px-3 py-1.5"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </GlowButton>
+                    <div className="flex items-center gap-1">
+                      {/* Optional: Page numbers could go here if needed */}
+                    </div>
+                    <GlowButton
+                      as="a"
+                      variant="secondary"
+                      disabled={page >= totalPages}
+                      href={page >= totalPages ? undefined : `/admin/user?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ""}${classFilter ? `&class=${encodeURIComponent(classFilter)}` : ""}`}
+                      className="px-3 py-1.5"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </GlowButton>
+                  </div>
+                </div>
+              )}
             </GlassCard>
           </div>
 
@@ -176,19 +228,20 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
             >
               <div className="space-y-2 max-h-[400px] overflow-y-auto overflow-x-hidden">
                 {groups.map((g) => (
-                  <details key={g.label} className="rounded-xl border border-[#e89a7a]/10 bg-[#2a2520]/40 p-2 hover:border-[#e89a7a]/20 transition-all">
-                    <summary className="cursor-pointer select-none text-sm text-[#f5f1ed] flex items-center justify-between font-medium">
-                      <span className="truncate">{g.label}</span>
-                      <span className="text-xs text-[#b8aea5] ml-2 shrink-0">{g.items.length}</span>
-                    </summary>
-                    {g.items.length === 0 ? (
-                      <div className="mt-2 text-xs text-[#b8aea5]">Keine Nutzer</div>
-                    ) : (
-                      <div className="mt-2">
-                        <UserListClient users={g.items} compact={true} />
-                      </div>
-                    )}
-                  </details>
+                  <a
+                    key={g.label}
+                    href={`/admin/user?class=${g.value}`}
+                    className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                      classFilter === g.value
+                        ? "bg-[#e89a7a]/20 border-[#e89a7a]/40 text-[#f5f1ed]"
+                        : "bg-[#2a2520]/40 border-[#e89a7a]/10 text-[#b8aea5] hover:border-[#e89a7a]/20 hover:text-[#f5f1ed]"
+                    }`}
+                  >
+                    <span className="text-sm font-medium truncate">{g.label}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-black/20 shrink-0">
+                      {g.count}
+                    </span>
+                  </a>
                 ))}
               </div>
             </GlassCard>
