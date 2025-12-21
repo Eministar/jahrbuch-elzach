@@ -68,8 +68,8 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
   const users = await query<UserRow[]>(
     `SELECT u.id, u.username, u.role, u.class, 
      COALESCE((SELECT 1 FROM poll_submissions ps WHERE ps.user_id = u.id LIMIT 1), 0) as has_voted
-     FROM users u ${whereSql} ORDER BY u.id DESC LIMIT ? OFFSET ?`,
-    [...params, limit, offset]
+     FROM users u ${whereSql} ORDER BY u.id DESC LIMIT ${limit} OFFSET ${offset}`,
+    params
   );
 
   return (

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import Aurora from "@/components/Aurora";
@@ -13,6 +13,9 @@ const display = DM_Serif_Display({ variable: "--font-display", weight: "400", su
 export const metadata: Metadata = {
     title: "Jahrbuch – Schulzentrum Oberes Elztal",
     description: "Gemacht vom Jahrbuch-Team der SMV",
+};
+
+export const viewport: Viewport = {
     themeColor: "#1a1714",
     colorScheme: "dark",
 };
