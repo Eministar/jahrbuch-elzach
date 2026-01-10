@@ -227,6 +227,9 @@ export async function updateUserRoleAction(formData: FormData) {
   if (!id || !['user','moderator','admin'].includes(role)) throw new Error('Invalid role update');
   await updateUserRole(id, role as 'user' | 'moderator' | 'admin');
   revalidatePath('/admin/user');
+  const returnToRaw = String(formData.get('return_to') || '').trim();
+  const returnTo = returnToRaw.startsWith('/') ? returnToRaw : '/admin/user';
+  redirect(returnTo);
 }
 
 // Admin-only: ban user

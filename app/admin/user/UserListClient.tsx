@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import GlowButton from "@/components/ui/GlowButton";
 import LoginLinkClient from "./LoginLinkClient";
 import ResetPollClient from "./ResetPollClient";
@@ -19,6 +20,10 @@ type UserRow = {
 
 export default function UserListClient({ users, compact = false }: { users: UserRow[]; compact?: boolean }) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const qs = searchParams?.toString();
+  const returnTo = qs ? `${pathname}?${qs}` : pathname;
 
   return (
     <div className="space-y-2">
@@ -119,6 +124,7 @@ export default function UserListClient({ users, compact = false }: { users: User
                         className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 min-w-0"
                       >
                         <input type="hidden" name="id" value={u.id} />
+                        <input type="hidden" name="return_to" value={returnTo} />
                         <select
                           name="role"
                           defaultValue={u.role}
