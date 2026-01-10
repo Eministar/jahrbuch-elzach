@@ -14,6 +14,9 @@ export default function Aurora({ className }: Props) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const isCoarsePointer = window.matchMedia?.('(pointer: coarse)').matches;
+    if (prefersReduced || isCoarsePointer) return;
     let raf = 0;
     let t = 0;
     const loop = () => {

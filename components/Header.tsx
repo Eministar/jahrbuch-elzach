@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getSession, clearSession } from "@/lib/session";
 import { query } from "@/lib/db";
-import { ensureUserProfileColumns } from "@/lib/migrations";
+import { ensureUserProfileColumnsOnce } from "@/lib/migrations";
 import { redirect } from "next/navigation";
 import GlowButton from "@/components/ui/GlowButton";
 import { LogOut, Menu, Home, Send, Shield, BookOpen, FileText, Lock, Users, BarChart3, Sparkles, HelpCircle, ShieldAlert, AlertCircle, Heart, Info, DollarSign, User } from "lucide-react";
@@ -20,7 +20,7 @@ export default async function Header() {
   const session = await getSession();
   if (!session) return null;
 
-  await ensureUserProfileColumns();
+  await ensureUserProfileColumnsOnce();
 
   // Get the actual username and avatar
   const users = await query<{ username: string; avatar_url: string | null }[]>(
@@ -55,14 +55,14 @@ export default async function Header() {
           </span>
 
           {/* Desktop Navigation Dropdown */}
-          <div className="relative group">
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-[#b8aea5] hover:text-[#f5f1ed] hover:bg-[#38302b] transition-all">
+          <details className="relative group">
+            <summary className="list-none cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-[#b8aea5] hover:text-[#f5f1ed] hover:bg-[#38302b] transition-all">
               <Menu className="h-4 w-4" />
               <span>Navigation</span>
-            </button>
+            </summary>
 
             {/* Dropdown Menu */}
-            <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-open:opacity-100 group-open:visible transition-all duration-200">
               <div className="min-w-64 backdrop-blur-xl bg-[#2a2520]/98 rounded-2xl shadow-2xl border border-[#e89a7a]/15 overflow-hidden">
                 <div className="py-2">
                   {/* Allgemein Section */}
@@ -197,7 +197,7 @@ export default async function Header() {
                 </div>
               </div>
             </div>
-          </div>
+          </details>
 
           <form action={logout}>
             <GlowButton

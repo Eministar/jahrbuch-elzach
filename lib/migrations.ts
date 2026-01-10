@@ -229,6 +229,15 @@ export async function ensureUserProfileColumns(): Promise<boolean> {
   }
 }
 
+let userProfileColumnsPromise: Promise<boolean> | null = null;
+
+export function ensureUserProfileColumnsOnce(): Promise<boolean> {
+  if (!userProfileColumnsPromise) {
+    userProfileColumnsPromise = ensureUserProfileColumns();
+  }
+  return userProfileColumnsPromise;
+}
+
 export async function ensureSubmissionMediaColumns(): Promise<boolean> {
   const conn = await getDbPool().getConnection();
   try {
