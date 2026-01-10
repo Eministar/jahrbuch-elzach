@@ -25,6 +25,8 @@ export default function AdminProfileEditor({ userId, username }: { userId: numbe
   const [removing, setRemoving] = useState(false);
   const [removingBanner, setRemovingBanner] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const bannerSrc = bannerUrl ? withBasePath(bannerUrl) : null;
+  const avatarSrc = avatarUrl ? withBasePath(avatarUrl) : null;
 
   useEffect(() => {
     let active = true;
@@ -174,9 +176,9 @@ export default function AdminProfileEditor({ userId, username }: { userId: numbe
       <div className="space-y-2">
         <label className="block text-sm font-medium text-[#f5f1ed]">Banner</label>
         <div className="w-full h-24 rounded-xl overflow-hidden bg-[#38302b] border border-[#e89a7a]/20">
-          {bannerUrl ? (
+          {bannerSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={withBasePath(bannerUrl)} alt="Banner" className="w-full h-full object-cover" />
+            <img src={bannerSrc || undefined} alt="Banner" className="w-full h-full object-cover" />
           ) : (
             <div className="h-full flex items-center justify-center text-[#b8aea5] text-sm">Kein Banner</div>
           )}
@@ -194,9 +196,9 @@ export default function AdminProfileEditor({ userId, username }: { userId: numbe
 
       <div className="flex items-start gap-6">
         <div className="w-24 h-24 rounded-xl overflow-hidden bg-[#38302b] flex items-center justify-center border border-[#e89a7a]/20">
-          {avatarUrl ? (
+          {avatarSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={withBasePath(avatarUrl)} alt="Avatar" className="w-full h-full object-cover" />
+            <img src={avatarSrc || undefined} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
             <span className="text-[#b8aea5] text-sm">Kein Bild</span>
           )}
