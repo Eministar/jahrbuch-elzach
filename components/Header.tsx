@@ -23,13 +23,13 @@ export default async function Header() {
   await ensureUserProfileColumnsOnce();
 
   // Get the actual username and avatar
-  const users = await query<{ username: string; avatar_url: string | null }[]>(
-    "SELECT username, avatar_url FROM users WHERE id = ? LIMIT 1",
+  const users = await query<{ username: string; avatar_url: string | null; role: "user" | "moderator" | "admin" }[]>(
+    "SELECT username, avatar_url, role FROM users WHERE id = ? LIMIT 1",
     [session.userId]
   );
   const username = users[0]?.username || "User";
   const avatarUrl = users[0]?.avatar_url || null;
-  const role = session.role;
+  const role = users[0]?.role || session.role;
   const isAdmin = role === "admin";
   const isModerator = role === "moderator" || isAdmin;
 

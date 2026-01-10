@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/session';
+import { getSessionWithDbRole } from '@/lib/auth';
 import { updateUserPassword } from '@/lib/auth';
 import { query } from '@/lib/db';
 
 export async function POST(req: Request) {
-  const session = await getSession();
+  const session = await getSessionWithDbRole();
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }

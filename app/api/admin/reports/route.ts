@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/session';
+import { getSessionWithDbRole } from '@/lib/auth';
 import { getDbPool } from '@/lib/db';
 import { ensureModerationSchema } from '@/lib/migrations';
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getSession();
+    const session = await getSessionWithDbRole();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

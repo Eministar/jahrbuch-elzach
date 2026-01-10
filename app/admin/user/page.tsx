@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/session";
+import { getSessionWithDbRole } from "@/lib/auth";
 import { query } from "@/lib/db";
 import GlassCard from "@/components/ui/GlassCard";
 import GlowButton from "@/components/ui/GlowButton";
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 type UserRow = { id: number; username: string; role: "user" | "moderator" | "admin"; class: string | null; has_voted: number };
 
 export default async function AdminUserPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
-  const session = await getSession();
+  const session = await getSessionWithDbRole();
   if (!session) redirect("/login");
   if (session.role !== "admin") redirect("/zugriff-verweigert");
 

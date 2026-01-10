@@ -1,6 +1,6 @@
 // app/api/admin/pdf/class-logins/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/session";
+import { getSessionWithDbRole } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { jsPDF } from "jspdf";
 
@@ -18,7 +18,7 @@ type UserRow = {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getSession();
+    const session = await getSessionWithDbRole();
     if (!session || session.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/session";
+import { getSessionWithDbRole } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { ensureModerationSchema, ensurePhaseSettings, ensureSubmissionMediaColumns } from "@/lib/migrations";
 import { getPhaseSettings } from "@/lib/phases";
@@ -74,7 +74,7 @@ type ReportRow = {
 };
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ [_key: string]: string | string[] | undefined }> }) {
-  const session = await getSession();
+  const session = await getSessionWithDbRole();
   if (!session) redirect("/login");
   if (session.role !== "moderator" && session.role !== "admin") redirect("/zugriff-verweigert");
   const isAdmin = session.role === "admin";

@@ -23,15 +23,17 @@ export async function getAuthState(): Promise<AuthState> {
 
   const conn = await getDbPool().getConnection();
   try {
-    type UserIdRow = RowDataPacket & { id: number };
-    const [userRows] = await conn.execute<UserIdRow[]>(
-      'SELECT id FROM users WHERE id = ? LIMIT 1',
+    type UserRow = RowDataPacket & { id: number; role: 'user' | 'moderator' | 'admin' };
+    const [userRows] = await conn.execute<UserRow[]>(
+      'SELECT id, role FROM users WHERE id = ? LIMIT 1',
       [session.userId]
     );
     if (userRows.length === 0) {
       // user removed
       return { session, exists: false, banned: false };
     }
+    const dbRole = userRows[0]?.role;
+    const sessionWithRole = dbRole ? { ...session, role: dbRole } : session;
 
     // Check active ban (best-effort: ignore errors if table/query missing)
     try {
@@ -50,7 +52,7 @@ export async function getAuthState(): Promise<AuthState> {
           return isNaN(d.getTime()) ? null : d.toISOString();
         })();
         return {
-          session,
+          session: sessionWithRole,
           exists: true,
           banned: true,
           reason: ban.reason ?? null,
@@ -61,10 +63,23 @@ export async function getAuthState(): Promise<AuthState> {
       // ignore ban query errors
     }
 
-    return { session, exists: true, banned: false };
+    return { session: sessionWithRole, exists: true, banned: false };
   } finally {
     conn.release();
   }
+}
+
+export async function getSessionWithDbRole(): Promise<SessionPayload | null> {
+  const session = await getSession();
+  if (!session) return null;
+  const pool = getDbPool();
+  type RoleRow = RowDataPacket & { role: 'user' | 'moderator' | 'admin' };
+  const [rows] = await pool.execute<RoleRow[]>(
+    'SELECT role FROM users WHERE id = ? LIMIT 1',
+    [session.userId]
+  );
+  if (!rows[0]?.role) return session;
+  return { ...session, role: rows[0].role };
 }
 
 export async function ensureNotBanned(): Promise<{ ok: true; session: SessionPayload } | { ok: false; status: 401 | 403; reason: string }> {
