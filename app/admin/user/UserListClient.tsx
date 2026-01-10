@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import GlowButton from "@/components/ui/GlowButton";
 import LoginLinkClient from "./LoginLinkClient";
 import ResetPollClient from "./ResetPollClient";
 import { deleteUserAction, updateUserPasswordAction, updateUserRoleAction } from "../actions";
-import { Trash2, QrCode, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { Trash2, QrCode, CheckCircle2, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import AdminProfileEditor from "./AdminProfileEditor";
 
@@ -24,6 +24,25 @@ export default function UserListClient({ users, compact = false }: { users: User
   const searchParams = useSearchParams();
   const qs = searchParams?.toString();
   const returnTo = qs ? `${pathname}?${qs}` : pathname;
+  const passwordRefs = useRef<Record<number, HTMLInputElement | null>>({});
+
+  function generatePassword(length = 12) {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%";
+    let pwd = "";
+    for (let i = 0; i < length; ++i) {
+      pwd += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return pwd;
+  }
+
+  function handleRandomPassword(userId: number) {
+    const pwd = generatePassword();
+    const input = passwordRefs.current[userId];
+    if (input) {
+      input.value = pwd;
+      input.focus();
+    }
+  }
 
   return (
     <div className="space-y-2">
@@ -158,12 +177,26 @@ export default function UserListClient({ users, compact = false }: { users: User
                       className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 min-w-0"
                     >
                       <input type="hidden" name="id" value={u.id} />
-                      <input
-                        name="password"
-                        type="password"
-                        placeholder="Neues Passwort"
-                        className="input-base text-sm flex-1 min-w-0"
-                      />
+                      <div className="relative flex-1 min-w-0">
+                        <input
+                          ref={(el) => {
+                            passwordRefs.current[u.id] = el;
+                          }}
+                          name="password"
+                          type="password"
+                          placeholder="Neues Passwort"
+                          className="input-base text-sm w-full pr-9"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRandomPassword(u.id)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[#b8aea5] hover:text-[#e89a7a]"
+                          title="Zufallspasswort generieren"
+                          tabIndex={-1}
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                        </button>
+                      </div>
                       <GlowButton
                         variant="secondary"
                         className="px-3 py-2 text-sm whitespace-nowrap"
