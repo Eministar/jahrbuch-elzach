@@ -2,13 +2,21 @@
 
 import { useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import GlowButton from "@/components/ui/GlowButton";
-import LoginLinkClient from "./LoginLinkClient";
-import ResetPollClient from "./ResetPollClient";
 import { deleteUserAction, updateUserPasswordAction, updateUserRoleAction } from "../actions";
 import { Trash2, QrCode, CheckCircle2, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import ProfileAvatar from "@/components/ProfileAvatar";
-import AdminProfileEditor from "./AdminProfileEditor";
+
+const AdminProfileEditor = dynamic(() => import("./AdminProfileEditor"), {
+  loading: () => <div className="text-xs text-[#b8aea5]">Profil-Tools laden...</div>,
+});
+const LoginLinkClient = dynamic(() => import("./LoginLinkClient"), {
+  loading: () => <div className="text-xs text-[#b8aea5]">Login-Link laden...</div>,
+});
+const ResetPollClient = dynamic(() => import("./ResetPollClient"), {
+  loading: () => <div className="text-xs text-[#b8aea5]">Umfrage-Tools laden...</div>,
+});
 
 type UserRow = {
   id: number;
@@ -186,6 +194,8 @@ export default function UserListClient({ users, compact = false }: { users: User
                           type="password"
                           placeholder="Neues Passwort"
                           className="input-base text-sm w-full pr-9"
+                          autoComplete="new-password"
+                          required
                         />
                         <button
                           type="button"

@@ -37,18 +37,29 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
   else if (classFilter) { where.push("u.class = ?"); params.push(classFilter); }
   const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
 
-  // Total count for pagination
-  const countResult = await query<{total: number}[]>(
-    `SELECT COUNT(*) as total FROM users u ${whereSql}`,
-    params
-  );
+  const [countResult, statsRows, groupRows, users] = await Promise.all([
+    query<{ total: number }[]>(
+      `SELECT COUNT(*) as total FROM users u ${whereSql}`,
+      params
+    ),
+    query<{ role: string; count: number }[]>(
+      `SELECT role, COUNT(*) as count FROM users GROUP BY role`
+    ),
+    query<{ class: string | null; count: number }[]>(
+      `SELECT class, COUNT(*) as count FROM users GROUP BY class`
+    ),
+    query<UserRow[]>(
+      `SELECT u.id, u.username, u.role, u.class, 
+       COALESCE((SELECT 1 FROM poll_submissions ps WHERE ps.user_id = u.id LIMIT 1), 0) as has_voted
+       FROM users u ${whereSql} ORDER BY u.id DESC LIMIT ${limit} OFFSET ${offset}`,
+      params
+    ),
+  ]);
+
   const totalUsersInFilter = countResult[0]?.total || 0;
   const totalPages = Math.ceil(totalUsersInFilter / limit);
 
   // Stats - query separately to be accurate for ALL users, not just filtered/paginated
-  const statsRows = await query<{role: string, count: number}[]>(
-    `SELECT role, COUNT(*) as count FROM users GROUP BY role`
-  );
   const stats = {
     total: statsRows.reduce((acc, row) => acc + row.count, 0),
     admins: statsRows.find(r => r.role === 'admin')?.count || 0,
@@ -57,20 +68,10 @@ export default async function AdminUserPage({ searchParams }: { searchParams: Pr
   };
 
   // Grouped counts for sidebar (always for all users)
-  const groupRows = await query<{class: string | null, count: number}[]>(
-    `SELECT class, COUNT(*) as count FROM users GROUP BY class`
-  );
   const groups = [
     { label: 'Ohne Klasse', count: groupRows.find(r => r.class === null)?.count || 0, value: 'none' },
     ...CLASSES.map((c) => ({ label: c, count: groupRows.find(r => r.class === c)?.count || 0, value: c })),
   ];
-
-  const users = await query<UserRow[]>(
-    `SELECT u.id, u.username, u.role, u.class, 
-     COALESCE((SELECT 1 FROM poll_submissions ps WHERE ps.user_id = u.id LIMIT 1), 0) as has_voted
-     FROM users u ${whereSql} ORDER BY u.id DESC LIMIT ${limit} OFFSET ${offset}`,
-    params
-  );
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-[#1a1714] via-[#221e1a] to-[#1a1714]">

@@ -212,7 +212,9 @@ export async function updateUserPasswordAction(formData: FormData) {
   if (session.role !== 'admin') redirect('/zugriff-verweigert');
   const id = Number(formData.get('id'));
   const password = String(formData.get('password') || '').trim();
-  if (!id || !password) throw new Error('User ID and new password are required');
+  if (!id || !password) {
+    return { error: 'User ID and new password are required' };
+  }
   await updateUserPassword(id, password);
   revalidatePath('/admin/user');
 }
