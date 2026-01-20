@@ -213,7 +213,7 @@ export async function updateUserPasswordAction(formData: FormData) {
   const id = Number(formData.get('id'));
   const password = String(formData.get('password') || '').trim();
   if (!id || !password) {
-    return { error: 'User ID and new password are required' };
+    throw new Error('User ID and new password are required');
   }
   await updateUserPassword(id, password);
   revalidatePath('/admin/user');
